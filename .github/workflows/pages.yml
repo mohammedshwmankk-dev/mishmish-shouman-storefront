@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -28,14 +28,7 @@ jobs:
         run: |
           mkdir -p _site
           curl --fail --location --retry 5 --retry-all-errors "$SITE_SOURCE/m.html" -o _site/index.html
-          curl --fail --location --retry 5 --retry-all-errors "$SITE_SOURCE/m.html" -o m.html
           curl --fail --location --retry 5 --retry-all-errors "$SITE_SOURCE/m.css" -o _site/m.css
-          cp _site/m.css m.css
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html m.html m.css
-          git commit -m "Add static storefront files" || true
-          git push
       - uses: actions/configure-pages@v5
         with:
           enablement: true
