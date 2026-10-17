@@ -1,0 +1,46 @@
+name: Publish static storefront
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download current storefront files
+        env:
+          SITE_SOURCE: https://680d199b3bafd5.lhr.life
+        run: |
+          mkdir -p _site
+          curl --fail --location --retry 5 --retry-all-errors "$SITE_SOURCE/m.html" -o _site/index.html
+          curl --fail --location --retry 5 --retry-all-errors "$SITE_SOURCE/m.html" -o m.html
+          curl --fail --location --retry 5 --retry-all-errors "$SITE_SOURCE/m.css" -o _site/m.css
+          cp _site/m.css m.css
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html m.html m.css
+          git commit -m "Add static storefront files" || true
+          git push
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
