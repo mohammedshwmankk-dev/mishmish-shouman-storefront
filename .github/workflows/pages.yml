@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download current storefront files
         env:
-          SITE_SOURCE: https://680d199b3bafd5.lhr.life
+          SITE_SOURCE: https://adcf8474a6c85f.lhr.life
         run: |
           mkdir -p _site
           curl --fail --location --retry 5 --retry-all-errors "$SITE_SOURCE/m.html" -o _site/index.html
